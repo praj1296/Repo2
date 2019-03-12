@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:tx="http://www.springframework.org/schema/tx"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-4.3.xsd
+		http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-4.3.xsd">
+
+
+<!-- Loading annotated beans -->
+
+<context:component-scan base-package="com.lti"></context:component-scan>
+<!-- <context:component-scan base-package="com.lti.component"></context:component-scan> 
+<context:component-scan base-package="com.lti.entity"></context:component-scan>
+<context:component-scan base-package="com.lti.service"></context:component-scan>
+<context:component-scan base-package="com.lti.dao"></context:component-scan>
+ -->
+<bean id="dataSource"
+		class="org.springframework.jdbc.datasource.DriverManagerDataSource">
+
+		<property name="driverClassName" value="oracle.jdbc.driver.OracleDriver" />
+		<property name="url" value="jdbc:oracle:thin:@localhost:1521:xe" />
+		<property name="username" value="hr" />
+		<property name="password" value="Newuser123" />
+	</bean>
+
+
+<!-- <bean id="dataSource1"
+		class="org.springframework.jdbc.datasource.DriverManagerDataSource">
+
+		<property name="driverClassName" value="oracle.jdbc.driver.OracleDriver" />
+		<property name="url" value="jdbc:oracle:thin:@localhost:1521:xe" />
+		<property name="username" value="stuser" />
+		<property name="password" value="sohan123" />
+	</bean>
+ -->	
+	
+	<!-- this bean will create the entitiy manager factory object for the us 
+	not need of meta inf/persistence.xml as all the settings required for hibernate or 
+	any other ORM will be done here itself -->
+	
+	<bean id="myEmf"
+     class="org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean">
+       <property name="dataSource" ref="dataSource" />
+       <property name="packagesToScan" value="com.lti.entity" />		<!-- Location of @Entity classes -->
+       <property name="jpaVendorAdapter">
+           <bean class="org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter" />
+       </property>
+       <property name="jpaProperties">
+          <props>
+              <prop key="hibernate.hbm2ddl.auto">update</prop>
+             <prop key="hibernate.show_sql">true</prop>
+          </props>
+       </property>
+   </bean>
+   
+   <!--  -->
+   
+   <bean id="transactionManager"
+     class="org.springframework.orm.jpa.JpaTransactionManager">
+       <property name="entityManagerFactory" ref="myEmf" />
+   </bean>
+   <tx:annotation-driven />
+
+</beans>
